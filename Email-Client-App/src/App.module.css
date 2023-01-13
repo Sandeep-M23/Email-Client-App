@@ -1,3 +1,101 @@
 .app{
-    margin: 10px;
+    /* background-color: #F4F9F5; */
+}
+
+.container{
+  display: flex;
+}
+
+.minMainSection{
+  width: 40%;
+  transition: ease-in-out;
+}
+
+.mainSection {
+ width: 100%;
+}
+
+.swipeableSection {
+  width: 65%;
+  margin: 25px;
+  border: 1px solid #CFD2DC;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #636363;
+  padding: 25px 15px;
+  display: flex;
+  transition: ease-in-out 1s;
+}
+
+.swipeableSectionHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0px 5px;
+  margin: 0px 5px;
+}
+
+.innerHeaderSection{
+  display: flex;
+}
+
+.swipeableSectionBody {
+  padding: 5px;
+  margin: 5px;
+}
+
+.swipeableSectionBody p {
+  margin: 20px 0px;
+}
+
+.dateSection {
+  margin-top: 20px;
+  display: flex;
+}
+
+.dateSection p {
+  margin-right: 10px;
+}
+
+.avatar {
+  width: 45%;
+  height: 45px;
+  border-radius: 50%;
+  margin-right: 5px;
+  margin-left: 5px;
+  color: white;
+  background-color: #E54065;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filterSection{
+    margin: 20px;
+    margin-bottom: 0px;
+    padding: 10px;
+    padding-bottom: 0px;
+}
+
+.filterSection button{
+  background-color: #E1E4EA;
+  color: #636363;
+  font-weight: 400;
+  border: 2px solid #CFD2DC;
+  margin: 0px 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.markFavoriteBtn {
+  background-color: #E54065;
+  color: #FFFFFF;
+  font-weight: 400;
+  border: none;
+  margin: 0px 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
 }
