@@ -1,14 +1,14 @@
 import React from "react";
 import classes from "./Card.module.css";
 
-const Card = () => {
+const Card = (props) => {
   return (
-    <div className={classes.card}>
+    <div className={classes.card} onClick={props.clicked}>
       {/* <img src="" alt="F" className={classes.avatar} /> */}
       <span className={classes.avatar}>
         <p>F</p>
       </span>
-      <article>
+      <article className={classes.cardBody}>
         <header className={classes.cardHeader}>
           <p>
             From : <b>&lt;Foo Bar foo.bar@gmail.com &gt;</b>

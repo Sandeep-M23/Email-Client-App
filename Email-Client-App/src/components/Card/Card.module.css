@@ -8,8 +8,12 @@
     padding: 10px;
     color: #636363;
     margin: 25px;
+    cursor: pointer;
 }
 
+.card:hover{
+    background-color: #F2F2F2;
+}
 .avatar {
   width: 45px;
   height: 45px;
