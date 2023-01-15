@@ -1,3 +1,4 @@
+/*Card*/
 .card {
     display: flex;
     flex-direction: row;
@@ -11,9 +12,17 @@
     cursor: pointer;
 }
 
+/*Card Hover Style*/
 .card:hover{
     background-color: #F2F2F2;
 }
+
+/*Read Card*/
+.read {
+    background-color: #F2F2F2;
+}
+
+/*Card avatar*/
 .avatar {
   width: 45px;
   height: 45px;
@@ -26,28 +35,47 @@
   justify-content: center;
 }
 
+/*Paragraph in avatar*/
 .avatar p {
     color: #FFFFFF;
     font-size: 1.5rem;
 }
 
+/*Card Header Paragraphs*/
 .cardHeader p {
     margin: 4px 0px;
 }
 
-.cardContent p {
+/*Card Description*/
+.cardDescription {
     margin: 8px 0px;
 }
 
+/*Card Footer*/
 .cardFooter {
     display: flex;
 }
 
-.cardFooter p {
+/*Dates Section in Card Footer*/
+.dateSection {
+    display: flex;
+}
+
+/*Card Footer Paragraphs*/
+.dateSection p {
     margin-right: 6px;
 }
 
+
+
+/*Favorite Tag*/
 .tag {
     margin: 0px 10px;
     color: #E54065;
 }
+
+@media screen and (max-width: 450px){
+    .card{
+        margin: 15px 5px;
+    }
+  }
