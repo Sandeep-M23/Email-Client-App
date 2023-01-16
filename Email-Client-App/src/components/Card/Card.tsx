@@ -1,32 +1,46 @@
-import React from "react";
+import type  { FC } from "react";
 import classes from "./Card.module.css";
 
-const Card = (props) => {
+interface CardProps {
+  name: string;
+  email: string;
+  subject: string;
+  description: string;
+  date: string;
+  time: string;
+  read?: boolean;
+  favorite?: boolean;
+  clicked: () => void;
+  }
+
+const Card: FC<CardProps> = (props) => {
+  const readCard = props.read ? classes.read : "";
   return (
-    <div className={classes.card} onClick={props.clicked}>
-      {/* <img src="" alt="F" className={classes.avatar} /> */}
+    <section className={`${classes.card} ${readCard}`} onClick={props.clicked}>
       <span className={classes.avatar}>
-        <p>F</p>
+        <p>{props.name.slice(0, 1).toUpperCase()}</p>
       </span>
-      <article className={classes.cardBody}>
+      <div className={classes.cardBody}>
         <header className={classes.cardHeader}>
           <p>
-            From : <b>&lt;Foo Bar foo.bar@gmail.com &gt;</b>
+            From : <b>&lt;{props.email} &gt;</b>
           </p>
           <p>
-            Subject : <b>Lorem Ipsum</b>
+            Subject : <b>{props.subject}</b>
           </p>
         </header>
-        <section className={classes.cardContent}>
-          <p>Card description or content goes here.</p>
-        </section>
+        <article className={classes.cardContent}>
+          <p className={classes.cardDescription}>{props.description}</p>
+        </article>
         <footer className={classes.cardFooter}>
-          <p>26/02/2020</p>
-          <p>10:30 am</p>
-          {/* <p className={classes.tag}>Favorite</p> */}
+          <div className={classes.dateSection}>
+            <p>{props.date}</p>
+            <p>{props.time}</p>
+          </div>
+          {props.favorite && <p className={classes.tag}>Favorite</p>}
         </footer>
-      </article>
-    </div>
+      </div>
+    </section>
   );
 };
 
