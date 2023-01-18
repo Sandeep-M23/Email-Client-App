@@ -1,22 +1,58 @@
-import { useState,useEffect, useRef, useLayoutEffect } from "react";
-import axios from 'axios';
-import classes from "./App.module.css";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useAppSelector, useAppDispatch } from "./hooks/hooks";
+import axios from "axios";
+import {
+  receivedEmails,
+  getSpecificEmail,
+  getFavoriteEmails,
+  getReadEmails,
+  toggleFilterFavorites,
+  toggleFilterRead,
+  toggleFilterUnread,
+  updateFavoriteEmails,
+  updateReadEmails,
+  displayBodyContent
+} from "./store/reducer/Reducer";
 import Card from "./components/Card/Card";
+import Spinner from "./components/Spinner/Spinner";
+import classes from "./App.module.css";
+
+interface Email {
+  id: number;
+  from: {
+    name: string;
+    email: string;
+  };
+  subject: string;
+  short_description: string;
+  date: string;
+  time: string;
+  read?: boolean;
+  favorite?: boolean;
+  body?: string;
+}
 
 const App = () => {
-  const [emails, setEmails] = useState([]);
-  const [favorite, setFavorite] = useState([]);
-  const [read, setRead] = useState([]);
-  const [filteredEmails, setFilteredEmails] = useState([]);
-  const [specificEmail, setSpecificEmail] = useState({});
-  const [showBodyContent, setShowBodyContent] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [showFavorites, setShowFavorites] = useState(false);
-  const [showReadEmails, setShowReadEmails] = useState(false);
-  const [showUnreadEmails, setShowUnreadEmails] = useState(false);
-  const [pages,setPages] = useState(1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
 
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
+
+  const dispatch = useAppDispatch();
+
+  const emails = useAppSelector((state) => state.emails.emails);
+  const specificEmail = useAppSelector((state) => state.emails.specificEmail);
+  const filteredEmails = useAppSelector((state) => state.emails.filteredEmails);
+  const favorites = useAppSelector((state) => state.emails.favorites);
+  const readEmails = useAppSelector((state) => state.emails.readEmails);
+  const showFavorites = useAppSelector(
+    (state) => state.emails.showFavoriteEmails
+  );
+  const showReadEmails = useAppSelector((state) => state.emails.showReadEmails);
+  const showUnreadEmails = useAppSelector(
+    (state) => state.emails.showUnreadEmails
+  );
+  const showEmailBodyContent = useAppSelector((state) => state.emails.showBodyContent);
 
   //To open window at top of the page
   useLayoutEffect(() => {
@@ -31,11 +67,10 @@ const App = () => {
     });
   };
 
-
   // useEffect(() => {
   //   const checkClickOutside = (e) => {
   //     if (!ref.current.contains(e.target)) {
-  //       setShowBodyContent(false);
+  //       setShowEmailBodyContent(false);
   //     }
   //   };
   //   document.addEventListener("mousedown", checkClickOutside);
@@ -45,38 +80,38 @@ const App = () => {
   // }, []);
 
   useEffect(() => {
-    const getFavoriteEmails = JSON.parse(
-      localStorage.getItem("favorites") || "0"
-    );
-    if (getFavoriteEmails !== 0) {
-      setFavorite([...getFavoriteEmails]);
+    //Retrieve Favorite Emails from local Storage
+    const getFavorites = JSON.parse(localStorage.getItem("favorites") || "0");
+    if (getFavorites !== 0) {
+      dispatch(updateFavoriteEmails(getFavorites));
     }
 
-    const getReadEmails = JSON.parse(localStorage.getItem("read") || "0");
+    //Retrieve Read Emails from local Storage
+    const getReadEmails = JSON.parse(localStorage.getItem("readEmail") || "0");
     if (getReadEmails !== 0) {
-      setRead([...getReadEmails]);
+      dispatch(updateReadEmails(getReadEmails));
     }
   }, []);
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`https://flipkart-email-mock.now.sh/?page=${pages}`).then((response) => {
-      const emails = response.data.list.map((email) => {
-        let date = new Date(email.date).toLocaleDateString("en-GB");
-        let time = new Date(email.date)
-          .toLocaleTimeString()
-          .replace(/(.*)\D\d+/, "$1");
+    axios
+      .get(`https://flipkart-email-mock.now.sh/?page=${page}`)
+      .then((response) => {
+        const emailList = response.data.list.map((email: Email) => {
+          let date = new Date(email.date).toLocaleDateString("en-GB");
+          let time = new Date(email.date)
+            .toLocaleTimeString()
+            .replace(/(.*)\D\d+/, "$1");
 
-        return { ...email, date, time };
+          return { ...email, date, time };
+        });
+        dispatch(receivedEmails(emailList));
+        setLoading(false);
       });
-      setEmails(emails);
-      setLoading(false);
-    });
-    console.log(emails)
-  }, [pages]);
+  }, [page]);
 
-  const onButtonClickHandler = (email) => {
-    scrollToTop()
+  const onButtonClickHandler = (email: Email) => {
     let id = email.id;
     axios
       .get(`https://flipkart-email-mock.now.sh/?id=${id}`)
@@ -86,94 +121,28 @@ const App = () => {
           ...email,
           body,
         };
-        setSpecificEmail(requiredEmail);
+        dispatch(getSpecificEmail(requiredEmail));
       });
-    console.log(emails);
-    setShowBodyContent(true);
+    dispatch(displayBodyContent(true));
+    scrollToTop();
 
-    let readArray = read;
-    let addToRead = true;
-
-    readArray.map((item: any, key: number) => {
-      if (item.id === id) {
-        addToRead = false;
-      }
-    });
-
-    if (addToRead) {
-      readArray.push(email);
-    }
-    setRead([...readArray]);
-
-    localStorage.setItem("read", JSON.stringify(read));
+    //Persisting read email
+    dispatch(getReadEmails(email));
   };
 
-  const onFavoriteClickHandler = (email, id) => {
-    let favoritesArray = favorite;
-    let addToFavorites = true;
-
-    favoritesArray.map((item: any, key: number) => {
-      if (item.id === id) {
-        favoritesArray.splice(key, 1);
-        addToFavorites = false;
-      }
-    });
-
-    if (addToFavorites) {
-      favoritesArray.push(email);
-    }
-    setFavorite([...favoritesArray]);
-
-    localStorage.setItem("favorites", JSON.stringify(favorite));
+  const toggleFavoriteHandler = (email: Email, id: number) => {
+    dispatch(getFavoriteEmails(email));
   };
 
-  const getUnreadEmailsHandler = () => {
-    setShowUnreadEmails((prevState) => !prevState);
-    if (!showUnreadEmails) {
-      const unread = emails.filter(
-        (firstArrayItem) =>
-          !read.some(
-            (secondArrayItem) => firstArrayItem.id === secondArrayItem.id
-          )
-      );
-      setFilteredEmails(unread);
-    } else {
-      setFilteredEmails([]);
-    }
-    setShowFavorites(false);
-    setShowReadEmails(false);
+  const navigatePageHandler = (e: any) => {
+    let pageValue = e.target.value;
+    setPage(pageValue);
+    scrollToTop()
   };
-
-  const getReadEmailsHandler = () => {
-    setShowReadEmails((prevState) => !prevState);
-    if (!showReadEmails) {
-      setFilteredEmails(read);
-    } else {
-      setFilteredEmails([]);
-    }
-    setShowFavorites(false);
-    setShowUnreadEmails(false);
-  };
-
-  const getFilterByFavoritesHandler = () => {
-    setShowFavorites((prevState) => !prevState);
-    if (!showFavorites) {
-      setFilteredEmails(favorite);
-    } else {
-      setFilteredEmails([]);
-    }
-    setShowReadEmails(false);
-    setShowUnreadEmails(false);
-  };
-
-  const changePageHandler = (e:any) => {
-    const pageValue = e.target.value;
-    setPages(pageValue);
-  }
 
   let mails =
     filteredEmails.length === 0
-      ? emails.map((e) => {
+      ? emails.map((e: any) => {
           return (
             <Card
               key={e.id}
@@ -183,13 +152,15 @@ const App = () => {
               date={e.date}
               time={e.time}
               description={e.short_description}
-              clicked={() => onButtonClickHandler(e, e.id)}
-              read={read.find((r) => r.id === e.id)}
-              favorite={favorite.find((f) => f.id === e.id)}
+              clicked={() => onButtonClickHandler(e)}
+              read={readEmails.find((r: any) => r.id === e.id) ? true : false}
+              favorite={
+                favorites.find((f: any) => f.id === e.id) ? true : false
+              }
             />
           );
         })
-      : filteredEmails.map((e) => {
+      : filteredEmails.map((e: any) => {
           return (
             <Card
               key={e.id}
@@ -199,9 +170,11 @@ const App = () => {
               date={e.date}
               time={e.time}
               description={e.short_description}
-              clicked={() => onButtonClickHandler(e, e.id)}
-              read={read.find((r) => r.id === e.id)}
-              favorite={favorite.find((f) => f.id === e.id)}
+              clicked={() => onButtonClickHandler(e)}
+              read={readEmails.find((r: any) => r.id === e.id) ? true : false}
+              favorite={
+                favorites.find((f: any) => f.id === e.id) ? true : false
+              }
             />
           );
         });
@@ -209,85 +182,101 @@ const App = () => {
   return (
     <div className={classes.app}>
       <section className={classes.filterSection}>
-        <span>Filter By:</span>
-        <button
-          onClick={(e) => getUnreadEmailsHandler()}
-          value="Unread"
-          className={`${classes.filterBtns} ${
-            showUnreadEmails && classes.active
-          }`}
-        >
-          Unread
-        </button>
-        <button
-          onClick={() => getReadEmailsHandler()}
-          value="read"
-          className={`${classes.filterBtns} ${
-            showReadEmails && classes.active
-          }`}
-        >
-          Read
-        </button>
-        <button
-          onClick={() => getFilterByFavoritesHandler()}
-          value="favorites"
-          className={`${classes.filterBtns} ${showFavorites && classes.active}`}
-        >
-          Favorites
-        </button>
+        <label>Filter By:</label>
+        <nav className={classes.filterBtnsContainer}>
+          <button
+            onClick={() => dispatch(toggleFilterUnread())}
+            className={`${classes.filterBtns} ${
+              showUnreadEmails && classes.active
+            }`}
+          >
+            Unread
+          </button>
+          <button
+            onClick={() => dispatch(toggleFilterRead())}
+            className={`${classes.filterBtns} ${
+              showReadEmails && classes.active
+            }`}
+          >
+            Read
+          </button>
+          <button
+            onClick={() => dispatch(toggleFilterFavorites())}
+            className={`${classes.filterBtns} ${
+              showFavorites && classes.active
+            }`}
+          >
+            Favorites
+          </button>
+        </nav>
       </section>
-      <div className={classes.container} ref={ref}>
+      <main className={classes.mainContainer} ref={ref}>
         <section
           className={
-            showBodyContent ? classes.minMainSection : classes.mainSection
+            showEmailBodyContent
+              ? classes.shrinkEmailSection
+              : classes.emailSection
           }
         >
-          {!loading && mails}
+          {loading ? <Spinner /> : mails}
         </section>
-        {showBodyContent && (
-          <section className={classes.swipeableSection}>
-            {/* <img src="" alt="F" className={classes.avatar} /> */}
-            <span className={classes.avatar}>
-              <p>F</p>
-            </span>
-            <div>
-              <header className={classes.swipeableSectionHeader}>
-                <div className={classes.innerHeaderSection}>
-                  <div>
-                    <h1>{specificEmail.subject}</h1>
-                    <span className={classes.dateSection}>
-                      <p>{specificEmail.date}</p>
-                      <p>{specificEmail.time}</p>
-                      {/* <p className={classes.tag}>Favorite</p> */}
+        {showEmailBodyContent && (
+          <section className={classes.emailBodySection}>
+            <div className={classes.emailDetails}>
+              <header className={classes.emailHeader}>
+                <div className={classes.emailHeaderInfo}>
+                  <div className={classes.avatar}>
+                    <span>
+                      <p>F</p>
                     </span>
+                  </div>
+                  <div>
+                    <h1 className={classes.emailSubject}>
+                      {specificEmail.subject}
+                    </h1>
+                    <div>
+                      <span className={classes.emailDates}>
+                        <p>{specificEmail.date}</p>
+                        <p>{specificEmail.time}</p>
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <button
-                  className={`${classes.markFavoriteBtn} ${
-                    favorite.find((e) => e.id === specificEmail.id) &&
-                    classes.markedFavorite
+                  className={`${classes.favoriteBtn} ${
+                    favorites.find((e) => e.id === specificEmail.id) &&
+                    classes.marked
                   }`}
                   onClick={() =>
-                    onFavoriteClickHandler(specificEmail, specificEmail.id)
+                    toggleFavoriteHandler(specificEmail, specificEmail.id)
+                  }
+                  aria-label={
+                    favorites.find((e) => e.id === specificEmail.id)
+                      ? "Remove as Favorite"
+                      : "Mark as Favorite"
                   }
                 >
-                  {favorite.find((e) => e.id === specificEmail.id)
+                  {favorites.find((e) => e.id === specificEmail.id)
                     ? "Remove as Favorite"
                     : "Mark as Favorite"}
                 </button>
               </header>
-              <section className={classes.swipeableSectionBody}>
+              <section className={classes.emailBody}>
                 <div dangerouslySetInnerHTML={{ __html: specificEmail.body }} />{" "}
                 {/*NEED TO FIND A BETTER SOLUTION */}
               </section>
             </div>
           </section>
         )}
-      </div>
-      <div className={classes.footer}>
-        <button value="1" onClick={(e) => changePageHandler(e)}>1</button>
-        <button value="2" onClick={(e) => changePageHandler(e)}>2</button>
-      </div>
+      </main>
+      <section className={classes.paginationSection}>
+        <button value="1" onClick={(e) => navigatePageHandler(e)}>
+          1
+        </button>
+        <button value="2" onClick={(e) => navigatePageHandler(e)}>
+          2
+        </button>
+      </section>
     </div>
   );
 };
