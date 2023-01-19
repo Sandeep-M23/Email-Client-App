@@ -262,7 +262,7 @@ const App = () => {
                 </button>
               </header>
               <section className={classes.emailBody}>
-                <div dangerouslySetInnerHTML={{ __html: specificEmail.body }} />{" "}
+                <div dangerouslySetInnerHTML={{ __html: specificEmail.body || '' }} />{" "}
                 {/*NEED TO FIND A BETTER SOLUTION */}
               </section>
             </div>
