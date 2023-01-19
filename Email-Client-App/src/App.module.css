@@ -1,84 +1,37 @@
 .app{
-    /* background-color: #F4F9F5; */
+  padding: 20px;
+  background-color: #F4F5F9;
 }
 
-.container{
-  display: flex;
-}
-
-.minMainSection{
-  width: 40%;
-  transition: ease-in-out;
-}
-
-.mainSection {
- width: 100%;
-}
-
-.swipeableSection {
-  width: 65%;
-  margin: 25px;
-  border: 1px solid #CFD2DC;
-  border-radius: 8px;
-  background-color: #FFFFFF;
-  color: #636363;
-  padding: 25px 15px;
-  display: flex;
-  transition: ease-in-out 1s;
-}
-
-.swipeableSectionHeader {
+/*Filter Section*/
+.filterSection{
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 0px 5px;
-  margin: 0px 5px;
-}
-
-.innerHeaderSection{
-  display: flex;
-}
-
-.swipeableSectionBody {
-  padding: 5px;
-  margin: 5px;
-}
-
-.swipeableSectionBody p {
-  margin: 20px 0px;
-}
-
-.dateSection {
-  margin-top: 20px;
-  display: flex;
-}
-
-.dateSection p {
-  margin-right: 10px;
-}
-
-.avatar {
-  width: 45%;
-  height: 45px;
-  border-radius: 50%;
-  margin-right: 5px;
-  margin-left: 5px;
-  color: white;
-  background-color: #E54065;
-  display: flex;
   align-items: center;
-  justify-content: center;
-}
-
-.filterSection{
-    margin: 20px;
+    margin: 15px;
     margin-bottom: 0px;
     padding: 10px;
     padding-bottom: 0px;
 }
 
-.filterSection button{
+/*Filter Buttons Container*/
+.filterBtnsContainer {
+  padding: 10px;
+}
+
+/*Filter Buttons*/
+.filterBtns {
+  color: #000;
+  background:none;
+  border:none;
+  font-weight: 400;
+  margin: 0px 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+/*Filter Button Active Class*/
+.active{
   background-color: #E1E4EA;
   color: #636363;
   font-weight: 400;
@@ -89,13 +42,193 @@
   cursor: pointer;
 }
 
-.markFavoriteBtn {
+/*Main Container*/
+.mainContainer{
+  display: flex;
+  flex-direction: row;
+  min-height: 90vh;
+}
+
+/*Shrinked Email Section*/
+.shrinkEmailSection{
+  width: 40%;
+  transition: ease-in-out;
+}
+
+/*Email List Section*/
+.emailSection{
+ width: 100%;
+}
+
+/*Email Body Section*/
+.emailBodySection {
+  width: 65%;
+  height: fit-content;
+  margin: 25px;
+  border: 1px solid #CFD2DC;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #636363;
+  padding: 25px 15px;
+  display: flex;
+  transition: ease-in-out 1s;
+}
+
+/*Email Header Avatar*/
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  margin-right: 15px;
+  margin-left: 5px;
+  color: white;
+  background-color: #E54065;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*Email Header*/
+.emailHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0px 5px;
+  margin: 0px 5px;
+}
+
+/*Email Header Information*/
+.emailHeaderInfo{
+  display: flex;
+}
+
+/*Email Subject*/
+.emailSubject {
+  font-size: 2.2rem;
+}
+
+/*Email Body*/
+.emailBody {
+  padding: 5px;
+  margin: 5px;
+  margin-left: 75px;
+}
+
+/*Inner Paragraphs in Email Body*/
+.emailBody p {
+  margin: 20px 0px;
+}
+
+/*Dates Section in Email Header*/
+.emailDates {
+  margin-top: 15px;
+  display: flex;
+}
+
+/*Individual p in Dates Section*/
+.emailDates p {
+  margin-right: 10px;
+}
+
+/*Favorite Button in Email Header*/
+.favoriteBtn {
   background-color: #E54065;
   color: #FFFFFF;
   font-weight: 400;
   border: none;
   margin: 0px 12px;
-  padding: 4px 12px;
+  padding: 6px 12px;
   border-radius: 20px;
   cursor: pointer;
+}
+
+/*Favorite Button Marked*/
+.marked {
+  background-color: #e5406599;
+}
+
+/*Pagination Section*/
+.paginationSection{
+  margin: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*Pagination Section Buttons*/
+.paginationSection button {
+  padding: 15px;
+  margin: 0px 20px;
+  color: #636363;
+  background:none;
+  border: 1px solid #CFD2DC;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 934px) {
+  .mainContainer{
+    flex-direction: column-reverse;
+  }
+  .emailBodySection {
+    width: 90%;
+  }
+  .shrinkEmailSection{
+    width: 100%;
+  }
+  .emailBody{
+    margin-left: 0px;
+  }
+  .emailSubject {
+    font-size: 1.8rem;
+  }
+}
+
+@media screen and (max-width: 934px) {
+  .mainContainer{
+    flex-direction: column-reverse;
+  }
+  .emailBodySection {
+    width: 90%;
+  }
+  .shrinkEmailSection{
+    width: 100%;
+  }
+  .emailBody{
+    margin-left: 10px;
+  }
+}
+
+@media screen and (max-width: 450px){
+  .emailSubject {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+  .avatar {
+    margin: 10px 0px;
+  }
+  .filterBtns {
+
+    margin: 0px 4px;
+    padding: 2px 6px;
+  }
+  .emailBodySection {
+    margin: 0px;
+  }
+  .emailHeaderInfo{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .emailHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .favoriteBtn {
+    margin: 10px 0px;
+  }
 }
