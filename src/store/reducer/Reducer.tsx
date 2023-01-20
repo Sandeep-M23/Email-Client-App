@@ -11,7 +11,6 @@ interface Email {
   date: string;
   time: string;
   read?: boolean;
-  favorite?: boolean;
   body?: string;
 }
 
@@ -32,7 +31,14 @@ const initialState: State = {
   filteredEmails:[],
   favorites:[],
   readEmails:[],
-  specificEmail: {},
+  specificEmail: {
+    id: 0,
+    from: { name: '', email: '' },
+    subject: '',
+    short_description: '',
+    date: '',
+    time: '',
+  },
   showFavoriteEmails:false,
   showReadEmails:false,
   showUnreadEmails:false,
@@ -50,6 +56,7 @@ export const emailSlice = createSlice({
     },
     getSpecificEmail(state, action: PayloadAction<Email>) {
       let email = action.payload;
+      console.log(email);
       state.specificEmail = {...email}
     },
     getFavoriteEmails(state, action:PayloadAction<Email>) {
